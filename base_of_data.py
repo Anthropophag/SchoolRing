@@ -103,8 +103,8 @@ class DataBaseManager:
         print('true save')
         con = sqlite3.connect('data_base/schoolring.sqlite')
         cur = con.cursor()
-        comand = f'INSERT INTO template(title, date, default) ' \
-                 f'VALUES("{template}", "{date}", "{0}")'
+        comand = f'INSERT INTO template(title, date, "default") ' \
+                 f'VALUES("{template}", "{date}", 0)'
         cur.execute(comand).fetchall()
         con.commit()
 

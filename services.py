@@ -41,6 +41,7 @@ class RingManager:
             self.today_sched = self.bd_manager.get_schedule_today(template_id=new_special_id)
             self.run_schedule()
         else:
+            print('НЕ нашёл айди')
             self.today_sched = self.bd_manager.get_default_schedule()
             self.run_schedule()
 

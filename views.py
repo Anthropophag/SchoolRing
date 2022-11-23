@@ -3,6 +3,8 @@ import sys
 import threading
 from multiprocessing import Queue
 
+# pyinstaller -F -w views.py
+
 import schedule
 from PyQt6 import QtWidgets
 from PyQt6 import uic
@@ -121,7 +123,7 @@ class Window(QMainWindow):
         """Switching tub to Home page"""
 
         self.stackedWidget.setCurrentIndex(0)
-        self._init_nearest_widget()
+        self.set_items_to_home()
 
     def go_timetable(self):
         """Switching tub to Timetable page"""
@@ -273,7 +275,13 @@ class Window(QMainWindow):
     def _init_homescroll(self):
         """Displaying data to scrollarea on Home page"""
 
-        self.today_sched = self.bd_manager.get_schedule_today(2)
+        special_id = self.bd_manager.get_special_date_on_today()
+        if special_id:
+            new_special_id = self.bd_manager.get_perents_tempolate_id(special_id)
+            self.today_sched = self.bd_manager.get_schedule_today(template_id=new_special_id)
+        else:
+            self.today_sched = self.bd_manager.get_default_schedule()
+
         self.today_sched = sorted(self.today_sched, key=lambda x: x[0])
         layout = QHBoxLayout()
         for i in self.today_sched:
@@ -465,9 +473,12 @@ class Window(QMainWindow):
             self.bd_manager.save_shedule_row(finish, temp_id)
 
     def change_defoult_template(self):
-        self.choose_defoult_template.show()
-        self.init_template_radiobutton()
-        self.choose_defoult_template.finish_chiise_button.clicked.connect(self.save_defoult_template)
+        if self.is_logined:
+            self.choose_defoult_template.show()
+            self.init_template_radiobutton()
+            self.choose_defoult_template.finish_chiise_button.clicked.connect(self.save_defoult_template)
+        else:
+            self.locked_window.show()
 
     def save_defoult_template(self):
         self.choose_defoult_template.hide()
@@ -540,10 +551,13 @@ class Window(QMainWindow):
         pass
 
     def create_template(self):
-        self.new_template.show()
-        self.__fill_combobox_for_template()
-        self.__init_taddy_date_for_template()
-        self.new_template.templates_combobox.currentTextChanged.connect(self.chenge_tableitem_as_template)
+        if self.is_logined:
+            self.new_template.show()
+            self.__fill_combobox_for_template()
+            self.__init_taddy_date_for_template()
+            self.new_template.templates_combobox.currentTextChanged.connect(self.chenge_tableitem_as_template)
+        else:
+            self.locked_window.show()
 
     def __fill_combobox_for_template(self):
         self.new_template.templates_combobox.clear()
@@ -571,7 +585,6 @@ class Window(QMainWindow):
         self.naming_temp.hide()
         self.naming_temp.name_lineEdit.setText('')
         self.set_item_to_template()
-
 
 def window_power():
     """Starts a thread with an image of a windowed application"""
