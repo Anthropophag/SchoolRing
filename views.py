@@ -4,9 +4,9 @@ import threading
 from multiprocessing import Queue
 
 import schedule
-from PyQt6 import QtWidgets
-from PyQt6 import uic
-from PyQt6.QtWidgets import (
+from PyQt5 import QtWidgets
+from PyQt5 import uic
+from PyQt5.QtWidgets import (
     QApplication,
     QMainWindow,
     QHBoxLayout,
